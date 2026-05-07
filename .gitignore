@@ -48,3 +48,4 @@ application-local.yml
 
 # JVM crash logs
 hs_err_pid*
+/src/main/resources/application-example.yml

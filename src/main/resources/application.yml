@@ -23,9 +23,9 @@ spring:
 
 telegram:
   bot:
-    name: detdoml2_withlist
-    token: 8244978462:AAH3Dwy57yJgxm4Df34_I5NML2HIeLr8bwM
-    admin-secret: I5NML2HIeLr8bwM
+    name: {}
+    token: {}
+    admin-secret: {}
 logging:
   level:
     com.gaming.bot: DEBUG
