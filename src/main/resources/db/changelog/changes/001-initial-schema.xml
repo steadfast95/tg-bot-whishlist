@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-create-users-table" author="system">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="telegram_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="registered_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_activity" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-create-characters-table" author="system">
+        <createTable tableName="characters">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" 
+                           foreignKeyName="fk_characters_user"
+                           references="users(id)"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="character_class" type="VARCHAR(255)"/>
+            <column name="level" type="INT"/>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="003-create-equipment-table" author="system">
+        <createTable tableName="equipment">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="character_id" type="BIGINT">
+                <constraints nullable="false"
+                           foreignKeyName="fk_equipment_character"
+                           references="characters(id)"/>
+            </column>
+            <column name="item_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_type" type="VARCHAR(255)"/>
+            <column name="quantity" type="INT"/>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="added_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-wishlists-table" author="system">
+        <createTable tableName="wishlists">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="character_id" type="BIGINT">
+                <constraints nullable="false"
+                           foreignKeyName="fk_wishlists_character"
+                           references="characters(id)"/>
+            </column>
+            <column name="item_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_type" type="VARCHAR(255)"/>
+            <column name="priority" type="INT"/>
+            <column name="notes" type="VARCHAR(1000)"/>
+            <column name="added_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_fulfilled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="005-create-groups-table" author="system">
+        <createTable tableName="groups">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="leader_id" type="BIGINT">
+                <constraints nullable="false"
+                           foreignKeyName="fk_groups_leader"
+                           references="users(id)"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="006-create-group-members-table" author="system">
+        <createTable tableName="group_members">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="group_id" type="BIGINT">
+                <constraints nullable="false"
+                           foreignKeyName="fk_group_members_group"
+                           references="groups(id)"/>
+            </column>
+            <column name="character_id" type="BIGINT">
+                <constraints nullable="false"
+                           foreignKeyName="fk_group_members_character"
+                           references="characters(id)"/>
+            </column>
+            <column name="joined_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addUniqueConstraint 
+            tableName="group_members" 
+            columnNames="group_id, character_id"
+            constraintName="uk_group_character"/>
+    </changeSet>
+
+    <changeSet id="007-create-indexes" author="system">
+        <createIndex tableName="users" indexName="idx_users_telegram_id">
+            <column name="telegram_id"/>
+        </createIndex>
+        
+        <createIndex tableName="characters" indexName="idx_characters_user_id">
+            <column name="user_id"/>
+        </createIndex>
+        
+        <createIndex tableName="equipment" indexName="idx_equipment_character_id">
+            <column name="character_id"/>
+        </createIndex>
+        
+        <createIndex tableName="wishlists" indexName="idx_wishlists_character_id">
+            <column name="character_id"/>
+        </createIndex>
+        
+        <createIndex tableName="groups" indexName="idx_groups_leader_id">
+            <column name="leader_id"/>
+        </createIndex>
+        
+        <createIndex tableName="group_members" indexName="idx_group_members_group_id">
+            <column name="group_id"/>
+        </createIndex>
+        
+        <createIndex tableName="group_members" indexName="idx_group_members_character_id">
+            <column name="character_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

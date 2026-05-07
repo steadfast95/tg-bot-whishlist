@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="003-create-group-invitations-table" author="system">
+        <createTable tableName="group_invitations">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="group_id" type="BIGINT">
+                <constraints nullable="false"
+                           foreignKeyName="fk_group_invitations_group"
+                           references="groups(id)"/>
+            </column>
+            <column name="code" type="VARCHAR(8)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_used" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="used_by_character_id" type="BIGINT">
+                <constraints foreignKeyName="fk_group_invitations_character"
+                           references="characters(id)"/>
+            </column>
+            <column name="used_at" type="TIMESTAMP"/>
+        </createTable>
+        
+        <createIndex tableName="group_invitations" indexName="idx_group_invitations_code">
+            <column name="code"/>
+        </createIndex>
+        
+        <createIndex tableName="group_invitations" indexName="idx_group_invitations_group_id">
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
